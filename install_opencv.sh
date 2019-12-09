@@ -24,7 +24,8 @@ OCV_SRC=$SRC/opencv
 OCV_BLD=$SRC/$TARGET/opencv_build
 OCV_LIB=$LIB/opencv
 
-OCV_URL=https://github.com/erikrk/opencv.git
+#OCV_URL=https://github.com/erikrk/opencv.git
+OCV_URL=https://github.com/opencv/opencv.git
 OCV_HASH=01d3df0d00e5c802108b90bd2dedb50e9a9ecacf
 
 OCV_FLAGS="-D CMAKE_BUILD_TYPE=RELEASE -D BUILD_SHARED_LIBS=OFF \
@@ -33,7 +34,7 @@ OCV_FLAGS="-D CMAKE_BUILD_TYPE=RELEASE -D BUILD_SHARED_LIBS=OFF \
            -D WITH_PNG=OFF -D WITH_WEBP=OFF -D WITH_OPENEXR=OFF \
            -D BUILD_TESTS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_DOCS=OFF \
            -D BUILD_opencv_python2=OFF -D BUILD_opencv_python3=OFF \
-           -D BUILD_opencv_java=OFF -D BUILD_opencv_apps=OFF"
+           -D BUILD_opencv_java=OFF -D BUILD_opencv_apps=OFF -D WITH_OPENEXR=OFF"
 OPENCV_EXTRA_FLAGS=
 
 if [[ $TARGET =~ ^osx- ]]; then
@@ -83,12 +84,12 @@ else
 fi
 
 echo Build Opencv
-git checkout $OCV_HASH || exit 1
+#git checkout $OCV_HASH || exit 1
 mkdir -p $OCV_BLD || exit 1
 mkdir -p $OCV_LIB || exit 1
 cd $OCV_BLD || exit 1
 cmake $OCV_FLAGS -D OPENCV_EXTRA_FLAGS="$OPENCV_EXTRA_FLAGS" \
       -D CMAKE_INSTALL_PREFIX=$OCV_LIB $OCV_SRC || exit 1
-make -j $CORES install || exit 1
+make install || exit 1
 touch $OCV_LIB/.success || exit 1
 echo Successfully installed OpenCV in $OCV_LIB

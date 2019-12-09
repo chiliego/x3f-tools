@@ -34,7 +34,7 @@ else
 ifeq (linux, $(TARGET_SYS))
   EXE =
   CFBASE =
-  LDBASE = -lz -ldl -lpthread
+  LDBASE = -lz -ldl -lpthread -static -static-libgcc -static-libstdc++ -latomic
   AUXOBJS =
 else
 ifeq (osx, $(TARGET_SYS))
@@ -58,15 +58,17 @@ ZLIB =
 ifneq ($(TARGET_SYS), linux)
 ZLIB = $(OCV)/share/OpenCV/3rdparty/lib/libzlib.a
 endif
-OCV_AUX = $(OCV)/share/OpenCV/3rdparty/lib/libtbb.a $(ZLIB)
+OCV_AUX = $(OCV)/lib/opencv4/3rdparty/libtbb.a $(ZLIB)
+OCV_HAL = $(OCV)/lib/opencv4/3rdparty/libtegra_hal.a
+OCV_ITT = $(OCV)/lib/opencv4/3rdparty/libittnotify.a
 
-OCV_CFLAGS = -I$(OCV)/include
-OCV_LIBS = $(addprefix $(OCV)/lib/libopencv_,photo.a imgproc.a core.a) $(OCV_AUX)
+OCV_CFLAGS = -I$(OCV)/include/opencv4
+OCV_LIBS = $(addprefix $(OCV)/lib/libopencv_,photo.a imgproc.a core.a) $(OCV_AUX) $(OCV_HAL) $(OCV_ITT)
 
 TIFF_INC1 = ../deps/src/opencv/3rdparty/libtiff
 TIFF_INC2 = ../deps/src/$(TARGET)/opencv_build/3rdparty/libtiff
 TIFF_CFLAGS = -I$(TIFF_INC1) -I$(TIFF_INC2)
-TIFF_LIBS = $(OCV)/share/OpenCV/3rdparty/lib/liblibtiff.a $(ZLIB)
+TIFF_LIBS = $(OCV)/lib/opencv4/3rdparty/liblibtiff.a $(ZLIB)
 
 CFLAGS = $(CFBASE) $(TIFF_CFLAGS) -g -O3 -Wall $(C)
 CXXFLAGS = $(CFLAGS) $(OCV_CFLAGS) -fvisibility-inlines-hidden
@@ -102,7 +104,7 @@ else
 
 -include $(BINDIR)/*.d
 
-$(BINDIR)/x3f_extract$(EXE): $(addprefix $(BINDIR)/,x3f_extract.o $(VERSION_O) x3f_io.o x3f_process.o x3f_meta.o x3f_image.o x3f_spatial_gain.o x3f_output_dng.o x3f_output_tiff.o x3f_output_ppm.o x3f_histogram.o x3f_print_meta.o x3f_dump.o x3f_matrix.o x3f_dngtags.o x3f_denoise_utils.o x3f_denoise_aniso.o x3f_denoise.o x3f_printf.o $(AUXOBJS)) $(OCV_LIBS) $(TIFF_LIBS)
+$(BINDIR)/x3f_extract$(EXE): $(addprefix $(BINDIR)/,x3f_extract.o $(VERSION_O) x3f_io.o x3f_process.o x3f_meta.o x3f_image.o x3f_spatial_gain.o x3f_output_dng.o x3f_output_tiff.o x3f_output_ppm.o x3f_histogram.o x3f_print_meta.o x3f_dump.o x3f_matrix.o x3f_dngtags.o x3f_denoise_utils.o x3f_denoise_aniso.o x3f_denoise.o x3f_printf.o  $(AUXOBJS)) $(OCV_LIBS) $(TIFF_LIBS)
 	$(CXX) $^ -o $@ $(LDFLAGS) -lm
 
 $(BINDIR)/x3f_io_test$(EXE): $(addprefix $(BINDIR)/,x3f_io_test.o $(VERSION_O) x3f_io.o x3f_print_meta.o x3f_printf.o $(AUXOBJS))
